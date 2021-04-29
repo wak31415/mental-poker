@@ -1,0 +1,9 @@
+[package]
+name = "mental-poker"
+version = "0.1.0"
+authors = ["Olavi Aikas <olavi.aikas@polytechnique.edu>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
