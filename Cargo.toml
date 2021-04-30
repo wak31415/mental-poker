@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 num-bigint = "0.4.0"
 rand = "0.8.3"
+num-traits = "0.2.14"
+# partial_application = "0.2.0"
