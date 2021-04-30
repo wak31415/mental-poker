@@ -1,4 +1,5 @@
-use num_bigint::BigUint;
+use num_bigint::{BigUint};
+use rand::prelude::*;
 
 fn erastothenes_sieve(roof: usize) -> Vec::<u64> {
     let mut sieve = Vec::<u64>::new();
@@ -47,4 +48,77 @@ pub fn divide_small_primes(n: &BigUint) -> bool {
         }
     }
     return true;
+}
+
+fn mr_decomp(candidate: &BigUint) -> (u32, BigUint) {
+    let mut i = 0u32;
+    let r: u32 = loop {
+        if divides(&(candidate - 1u32), u64::pow(2, i)) {
+            i += 1;
+        } else {
+            i -= 1;
+            break i;
+        }
+    };
+    let d = (candidate - 1u32)/u64::pow(2, r);
+    return (r, d);
+}
+
+
+fn miller_rabin(candidate: &BigUint, rounds: usize) -> bool {
+    let (r, d) = mr_decomp(candidate);
+    for _k in 0..rounds {
+        let mut a = gen_large_number(candidate.bits() as usize, false);
+        while a < BigUint::from(2u32) || a > candidate - 2u32 {
+            a = gen_large_number(candidate.bits() as usize, false);
+        }
+        let mut x = a.modpow(&d, candidate);
+        if x == BigUint::from(1u32) || x == candidate - 1u32 {
+            continue;
+        }
+        let mut failed = false;
+        for _i in 1..r {
+            x = x.modpow(&BigUint::from(2u32), candidate);
+            if x == candidate - 1u32 {
+                failed = true;
+                break;
+            }
+        }
+        if failed {
+            continue;
+        }
+        return false;
+    }
+    return true;
+}
+
+fn gen_large_number(size: usize, force_size: bool) -> BigUint {
+    let mut rng = thread_rng();
+    let mut w: BigUint;
+    {
+        let mut v = Vec::<u32>::new();
+        let et = match size%32 { 0 => 0, _ => 1};
+        for _i in 0..(size/32 + et) {
+            v.push(rng.gen());
+        }
+        w = BigUint::new(v);
+    }
+    if force_size {
+        w.set_bit((size - 1) as u64, true);
+        w.set_bit(0u64, true);  
+    }
+    return w;
+}
+
+pub fn gen_prime(size: usize) -> BigUint {
+    let res = loop {
+        let candidate = gen_large_number(size, true);
+        if !divide_small_primes(&candidate) {
+            continue;
+        }
+        if miller_rabin(&candidate, 8) {
+            break candidate;
+        }
+    };
+    return res;
 }
