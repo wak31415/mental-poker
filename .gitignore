@@ -1,2 +1,6 @@
 Cargo.lock
 target/
+
+# VS Code
+.code
+/*.code-workspace
