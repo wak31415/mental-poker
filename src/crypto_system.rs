@@ -1,5 +1,5 @@
 use super::astarzstar;
-use super::quadratic_residues::is_quadratic_residue_n;
+use super::quadratic_residues::is_n;
 use num_bigint::{BigUint};
 
 type Message = Vec<bool>;
@@ -21,7 +21,7 @@ pub fn encrypt(message: &Message, n: &BigUint, y: &BigUint) -> Ciphertext {
 pub fn decrypt(cipher: &Ciphertext, p1: &BigUint, p2: &BigUint) -> Message {
     let mut res = Message::with_capacity(cipher.len());
     for i in 0..cipher.len() {
-        if is_quadratic_residue_n(&cipher[i], p1, p2) {
+        if is_n(&cipher[i], p1, p2) {
             res.push(false);
         } else {
             res.push(true);
