@@ -13,7 +13,7 @@ use num_traits::{Zero, One};
 // use partial_application::partial!;
 
 // Based on http://math.fau.edu/richman/jacobi.htm
-pub fn compute(m: &BigUint, n: &BigUint) -> i32 {
+pub fn compute(m: &BigUint, n: &BigUint) -> i8 {
     // println!("compute {}, {}", m, n);
     let z: BigUint = Zero::zero();
     let o: BigUint = One::one();
@@ -43,3 +43,18 @@ pub fn compute(m: &BigUint, n: &BigUint) -> i32 {
         }
     } 
 }
+
+// fn zstar(N: &BigUint) {
+    // 
+// }
+
+// pub fn astar(N: &BigUint) -> Vec::<BigUint> {
+//     let o: BigUint = One::one();
+//     let mut result = Vec::from_iter(&o..N);
+//     for x in result {
+//         if compute(&x,N) != 1 {
+
+//         }
+//     };
+//     return result
+// }
