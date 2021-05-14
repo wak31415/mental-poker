@@ -40,7 +40,7 @@ fn divides(b: &BigUint, d: u64) -> bool {
     return false;
 }
 
-pub fn divide_small_primes(n: &BigUint) -> bool {
+fn divide_small_primes(n: &BigUint) -> bool {
     let small_primes = erastothenes_sieve(20000);
     for m in small_primes {
         if divides(n, m) {
