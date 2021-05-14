@@ -1,23 +1,32 @@
 mod prime_gen;
-use rand::seq::SliceRandom;
+mod astarzstar;
+mod crypto_system;
+mod gcd;
+mod jacobi;
+mod quadratic_residues;
 
 fn main() {
-    let mut rng = rand::thread_rng();
     let p1 = prime_gen::gen_prime(512);
     let mut p2 = prime_gen::gen_prime(512);
-    while p1 == p2 {
-        p2 = prime_gen::gen_prime(512)
+    while &p1 == &p2 {
+        p2 = prime_gen::gen_prime(512);
     }
+    println!("Generated primes");
     //p1 and p2 are unequal primes (private key)
-    let n = p1*p2; //n is the public key together with some non-residue y to be computed
-    let mut y = astar(n).choose(rng); //astar (vec<bigUInt>) is the coprimes of n with jacobi symbol 1
-    while is_residue(n, y) {
+    let n = &p1*&p2; //n is the public key together with some non-residue y to be computed
+    let mut y = astarzstar::rand_astar(&n); //astar (vec<bigUInt>) is the coprimes of n with jacobi symbol 1
+    while quadratic_residues::is_quadratic_residue_n(&y, &p1, &p2) {
         //We regenerate y until its not a quadratic residue
-        y = astar(n).choose(rng);
+        y = astarzstar::rand_astar(&n);
     }
     //Now (n, y) is the public key
-    let message = "Hello world".to_string();
-    let cipher = encrypt(&n, &y, &message);
-    
-
+    let message: Vec<bool> = vec![true, true, false, false, true];
+    let cipher = crypto_system::encrypt(&message, &n, &y);
+    for i in 0..5 {
+        println!("{}", cipher[i]);
+    }
+    let decrypted_message = crypto_system::decrypt(&cipher, &p1, &p2);
+    for i in 0..5 {
+        println!("{}", decrypted_message[i]);
+    }
 }

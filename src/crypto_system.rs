@@ -1,18 +1,31 @@
+use super::astarzstar;
+use super::quadratic_residues::is_n;
 use num_bigint::{BigUint};
-use rand::prelude::*
 
-type message = Vec<Bool>;
-type ciphertext = Vec<BigUint>;
+type Message = Vec<bool>;
+type Ciphertext = Vec<BigUint>;
 
-pub fn encrypt(message: &message, n: &BigUint, y: &BigUint) {
-    let mut res: ciphertext = Vec<BigUint>::with_capacity(message.len());
-    let mut rng = rand::thread_rng();
+pub fn encrypt(message: &Message, n: &BigUint, y: &BigUint) -> Ciphertext {
+    let mut res: Ciphertext = Vec::<BigUint>::with_capacity(message.len());
     for i in 0..message.len() {
-        let xi = rand_zn(n);
+        let xi = astarzstar::rand_zstar(n);
         if message[i] {
-            res[i] = (y*xi*xi) % n;
+            res.push((y*&xi*&xi) % n);
         } else {
-            res[i] = xi.modpow(&BigUint::from(2u32), n);
+            res.push(xi.modpow(&BigUint::from(2u32), n));
         }
     }
+    return res;
+}
+
+pub fn decrypt(cipher: &Ciphertext, p1: &BigUint, p2: &BigUint) -> Message {
+    let mut res = Message::with_capacity(cipher.len());
+    for i in 0..cipher.len() {
+        if is_n(&cipher[i], p1, p2) {
+            res.push(false);
+        } else {
+            res.push(true);
+        }
+    }
+    return res;
 }
