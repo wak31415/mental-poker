@@ -9,8 +9,9 @@ fn main() {
     let p1 = prime_gen::gen_prime(512);
     let mut p2 = prime_gen::gen_prime(512);
     while &p1 == &p2 {
-        p2 = prime_gen::gen_prime(512)
+        p2 = prime_gen::gen_prime(512);
     }
+    println!("Generated primes");
     //p1 and p2 are unequal primes (private key)
     let n = &p1*&p2; //n is the public key together with some non-residue y to be computed
     let mut y = astarzstar::rand_astar(&n); //astar (vec<bigUInt>) is the coprimes of n with jacobi symbol 1
@@ -23,5 +24,9 @@ fn main() {
     let cipher = crypto_system::encrypt(&message, &n, &y);
     for i in 0..5 {
         println!("{}", cipher[i]);
+    }
+    let decrypted_message = crypto_system::decrypt(&cipher, &p1, &p2);
+    for i in 0..5 {
+        println!("{}", decrypted_message[i]);
     }
 }
