@@ -1,18 +1,19 @@
+use super::astarzstar;
 use num_bigint::{BigUint};
-use rand::prelude::*
 
-type message = Vec<Bool>;
-type ciphertext = Vec<BigUint>;
+type Message = Vec<bool>;
+type Ciphertext = Vec<BigUint>;
 
-pub fn encrypt(message: &message, n: &BigUint, y: &BigUint) {
-    let mut res: ciphertext = Vec<BigUint>::with_capacity(message.len());
-    let mut rng = rand::thread_rng();
+pub fn encrypt(message: &Message, n: &BigUint, y: &BigUint) -> Ciphertext {
+    let mut res: Ciphertext = Vec::<BigUint>::with_capacity(message.len());
+
     for i in 0..message.len() {
-        let xi = rand_zn(n);
+        let xi = astarzstar::rand_zstar(n);
         if message[i] {
-            res[i] = (y*xi*xi) % n;
+            res.push((y*&xi*&xi) % n);
         } else {
-            res[i] = xi.modpow(&BigUint::from(2u32), n);
+            res.push(xi.modpow(&BigUint::from(2u32), n));
         }
     }
+    return res;
 }
