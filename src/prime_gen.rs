@@ -40,7 +40,7 @@ fn divides(b: &BigUint, d: u64) -> bool {
     return false;
 }
 
-pub fn divide_small_primes(n: &BigUint) -> bool {
+fn divide_small_primes(n: &BigUint) -> bool {
     let small_primes = erastothenes_sieve(20000);
     for m in small_primes {
         if divides(n, m) {
@@ -92,7 +92,7 @@ fn miller_rabin(candidate: &BigUint, rounds: usize) -> bool {
     return true;
 }
 
-fn gen_large_number(size: usize, force_size: bool) -> BigUint {
+pub fn gen_large_number(size: usize, force_size: bool) -> BigUint {
     let mut rng = thread_rng();
     let mut w: BigUint;
     {
@@ -122,3 +122,4 @@ pub fn gen_prime(size: usize) -> BigUint {
     };
     return res;
 }
+
