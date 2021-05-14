@@ -92,7 +92,7 @@ fn miller_rabin(candidate: &BigUint, rounds: usize) -> bool {
     return true;
 }
 
-fn gen_large_number(size: usize, force_size: bool) -> BigUint {
+pub fn gen_large_number(size: usize, force_size: bool) -> BigUint {
     let mut rng = thread_rng();
     let mut w: BigUint;
     {
@@ -122,3 +122,4 @@ pub fn gen_prime(size: usize) -> BigUint {
     };
     return res;
 }
+
