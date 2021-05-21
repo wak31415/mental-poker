@@ -2,8 +2,8 @@ use super::astarzstar;
 use super::quadratic_residues::is_n;
 use num_bigint::{BigUint};
 
-type Message = Vec<bool>;
-type Ciphertext = Vec<BigUint>;
+pub type Message = Vec<bool>;
+pub type Ciphertext = Vec<BigUint>;
 
 pub fn encrypt(message: &Message, n: &BigUint, y: &BigUint) -> Ciphertext {
     let mut res: Ciphertext = Vec::<BigUint>::with_capacity(message.len());
