@@ -6,6 +6,7 @@
  *          Olavi Äikäs
  * See git history for contributions
  */
+#![allow(non_snake_case)]
 
 // mod prime_gen;
 use super::prime_gen;
@@ -36,7 +37,7 @@ pub fn generate_keys(size: usize) -> (BigUint, BigUint, BigUint , BigUint) {
     let N = &P * &Q;
 
     let mut y = astarzstar::rand_astar(&N);
-    while !check_quadratic_residuoity(&y, &N, &P, &Q) {
+    while check_quadratic_residuoity(&y, &N, &P, &Q) {
         y = astarzstar::rand_astar(&N);
     }
 
@@ -51,7 +52,7 @@ pub fn guess_whether_quadratic_residue(N: &BigUint, y: &BigUint, q: &BigUint) ->
         return false;
     }
     if y == q {
-        return true;
+        return false;
     }
 
     let mut rng = thread_rng();
