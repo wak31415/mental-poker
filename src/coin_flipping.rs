@@ -21,7 +21,7 @@ fn check_quadratic_residuoity(y: &BigUint, N: &BigUint, P: &BigUint, Q: &BigUint
     if !(gcd::compute(y, N).is_one()) {
         return false;
     }   
-    if jacobi::compute(y, N) == -1 {
+    if jacobi::compute(y, N) != 1 {
         return false;
     }
     return quadratic_residues::is_n(y, P, Q);
@@ -47,11 +47,11 @@ pub fn generate_keys(size: usize) -> (BigUint, BigUint, BigUint , BigUint) {
 
 pub fn guess_whether_quadratic_residue(N: &BigUint, y: &BigUint, q: &BigUint) -> bool {
     let jacobi = jacobi::compute(q, N);
-    if jacobi == -1 {
+    if jacobi != 1 {
         return false;
     }
     if y == q {
-        return false;
+        return true;
     }
 
     let mut rng = thread_rng();
