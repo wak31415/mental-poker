@@ -18,6 +18,8 @@ use rand::prelude::*;
 use num_bigint::BigUint;
 use num_traits::One;
 
+use super::crypto_system::{Message, Ciphertext};
+
 fn check_quadratic_residuoity(y: &BigUint, N: &BigUint, P: &BigUint, Q: &BigUint) -> bool {
     if !(gcd::compute(y, N).is_one()) {
         return false;
@@ -59,4 +61,45 @@ pub fn guess_whether_quadratic_residue(N: &BigUint, y: &BigUint, q: &BigUint) ->
     let flip : bool = rng.gen();
 
     return flip;
+}
+
+/* The sender, in the paper called "B", has the factorization
+ * and thus knows if A succeeded or not. Thus, contrary to usual
+ * notation, sender is B and receiver is A. */
+
+// The sender generates the big numbers to send.
+pub fn values_sender(n: usize, N: &BigUint) -> Ciphertext {
+    let mut b: Ciphertext = Ciphertext::with_capacity(n);
+    for _i in 0..n {
+        b.push(astarzstar::rand_astar(N));
+    }
+    return b;
+}
+
+/* The receiver receives the big numbers and
+ * sends guesses */
+pub fn values_receiver(N: &BigUint, y: &BigUint, b: &Ciphertext) -> Message {
+    let mut a: Message = Message::with_capacity(b.len());
+    for i in 0..b.len() {
+        a.push(guess_whether_quadratic_residue(N, y, &b[i]));
+    }
+    return a;
+}
+
+/* The sender receives the guesses and knows
+ * whether the receiver succeeded their coin throws
+ * from the original numbers that the sender also has */
+pub fn values_checker(b: &Ciphertext, a: &Message, P: &BigUint, Q: &BigUint) -> Message {
+    assert_eq!(b.len(), a.len());
+    let mut m: Message = Message::with_capacity(a.len());
+    for i in 0..a.len() {
+        let a_guessed = a[i];
+        let b_knows = quadratic_residues::is_n(&b[i], P, Q);
+        if a_guessed == b_knows {
+            m.push(true);       
+        } else {
+            m.push(false);
+        }
+    }
+    return m;
 }
