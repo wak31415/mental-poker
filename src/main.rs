@@ -20,13 +20,13 @@ fn main() {
         y = astarzstar::rand_astar(&n);
     }
     //Now (n, y) is the public key
-    let message: Vec<bool> = vec![true, true, false, false, true];
+    let message: Vec<bool> = vec![true, true, false, false, true, false, false, true, false, true];
     let cipher = crypto_system::encrypt(&message, &n, &y);
-    for i in 0..5 {
+    for i in 0..message.len() {
         println!("{}", cipher[i]);
     }
     let decrypted_message = crypto_system::decrypt(&cipher, &p1, &p2);
-    for i in 0..5 {
+    for i in 0..decrypted_message.len() {
         println!("{}", decrypted_message[i]);
     }
 }
