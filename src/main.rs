@@ -15,7 +15,7 @@ fn main() {
     //p1 and p2 are unequal primes (private key)
     let n = &p1*&p2; //n is the public key together with some non-residue y to be computed
     let mut y = astarzstar::rand_astar(&n); //astar (vec<bigUInt>) is the coprimes of n with jacobi symbol 1
-    while quadratic_residues::is_quadratic_residue_n(&y, &p1, &p2) {
+    while quadratic_residues::is_n(&y, &p1, &p2) {
         //We regenerate y until its not a quadratic residue
         y = astarzstar::rand_astar(&n);
     }
