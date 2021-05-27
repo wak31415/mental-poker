@@ -7,9 +7,9 @@ use std::thread;
 
 #[derive(Debug)]
 pub struct Card {
-    p: BigUint,
-    q: BigUint,
-    N: BigUint,
+    pub p: BigUint,
+    pub q: BigUint,
+    pub N: BigUint,
     pub plaintext: crypto_system::Plaintext
 }
 

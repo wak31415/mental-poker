@@ -41,13 +41,13 @@ pub fn encrypt(message: &Plaintext, pubkey: &PublicKey) -> Ciphertext {
 }
 
 
-pub fn encrypt_card(message: card_deck::Card, pubkey: &PublicKey) -> card_deck::EncrCard {
+pub fn encrypt_card(message: &Box<card_deck::Card>, pubkey: &PublicKey) -> card_deck::EncrCard {
     let encr_card = card_deck::EncrCard { N: pubkey.N.clone(), ciphertext: encrypt(&message.plaintext, &pubkey) };
     encr_card
 }
 
 
-pub fn decrypt(cipher: &Ciphertext, privkey: PrivateKey) -> Plaintext {
+pub fn decrypt(cipher: &Ciphertext, privkey: &PrivateKey) -> Plaintext {
     let mut res = Plaintext::with_capacity(cipher.len());
     for i in 0..cipher.len() {
         if is_n(&cipher[i], &privkey.p, &privkey.q) {
@@ -57,4 +57,9 @@ pub fn decrypt(cipher: &Ciphertext, privkey: PrivateKey) -> Plaintext {
         }
     }
     res
+}
+
+pub fn decrypt_card(cipher: &Box<card_deck::EncrCard>, privkey: &PrivateKey) -> card_deck::Card {
+    let decr_card = card_deck::Card { p: BigUint::from(0u8), q: BigUint::from(0u8), N: BigUint::from(0u8), plaintext: decrypt(&cipher.ciphertext, &privkey) };
+    decr_card
 }

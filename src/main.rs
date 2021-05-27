@@ -11,10 +11,10 @@ fn main() {
     println!("{:?}", cards);
 
     
-    let p1 = prime_gen::gen_prime(512);
-    let mut p2 = prime_gen::gen_prime(512);
+    let p1 = prime_gen::gen_prime(32);
+    let mut p2 = prime_gen::gen_prime(32);
     while &p1 == &p2 {
-        p2 = prime_gen::gen_prime(512);
+        p2 = prime_gen::gen_prime(32);
     }
     
     println!("Generated primes");
@@ -34,9 +34,14 @@ fn main() {
     for i in 0..5 {
         println!("{}", cipher[i]);
     }
-    let decrypted_message = crypto_system::decrypt(&cipher, privkey);
+    let decrypted_message = crypto_system::decrypt(&cipher, &privkey);
     for i in 0..5 {
         println!("{}", decrypted_message[i]);
     }
-    // println!("{:?}", crypto_system::encrypt_card(cards[0], &pubkey));
+
+    println!("{:?}", cards[0]);
+    let encr_card : card_deck::EncrCard = crypto_system::encrypt_card(&cards[0], &pubkey);
+    println!("{:?}", encr_card);
+    println!("{:?}", crypto_system::decrypt_card(&Box::new(encr_card), &privkey));
+    
 }
