@@ -35,10 +35,16 @@ fn inverse_in_field(a: &BigUint, n: &BigUint) -> BigUint {
     }
 }
 
+/* From On taking roots in finite fields
+ * by Adleman, Manders and Miller.
+ * Assumptions:
+ * a, p relatively prime
+ * p prime
+ * a ^ ((p-1)/2) is 1 mod p because a must be a q.r. mod p */
 pub fn least_root(a: &BigUint, p: &BigUint) -> BigUint {
     let mut g: BigUint = BigUint::from(2u32);
     let mut ma = a.clone();
-    while g.modpow(&((p - 1u32)/2u32), p) == BigUint::from(0u32) {
+    while g.modpow(&((p - 1u32)/2u32), p) == BigUint::from(1u32) {
         g += 1u32;
     }
     let (k, d) = mr_decomp(p);

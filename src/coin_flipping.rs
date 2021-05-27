@@ -70,6 +70,14 @@ pub fn guess_whether_quadratic_residue(pubkey: &PublicKey, q: &BigUint) -> bool 
  * and thus knows if A succeeded or not. Thus, contrary to usual
  * notation, sender is B and receiver is A. */
 
+/* In the mental poker algorithm:
+ * "When we say that A flips k to B, we mean that B receives
+ * a random number k from A, and A has no information about A"
+ * Meaning sender (person knowing the number) is B 
+ * and receiver (person attempting coin flips) is A.
+ * Finally this sentence needs to be read
+ * "Receiver flips k to sender" */ 
+
 // The sender generates the big numbers to send.
 pub fn values_sender(n: usize, N: &BigUint) -> Ciphertext {
     let mut b: Ciphertext = Ciphertext::with_capacity(n);
