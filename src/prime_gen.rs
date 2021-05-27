@@ -50,7 +50,7 @@ fn divide_small_primes(n: &BigUint) -> bool {
     return true;
 }
 
-fn mr_decomp(candidate: &BigUint) -> (u32, BigUint) {
+pub fn mr_decomp(candidate: &BigUint) -> (u32, BigUint) {
     let mut i = 0u32;
     let r: u32 = loop {
         if divides(&(candidate - 1u32), u64::pow(2, i)) {
