@@ -8,7 +8,7 @@ mod jacobi;
 mod quadratic_residues;
 mod coin_flipping;
 
-use crypto_system::{Ciphertext, Message};
+use crypto_system::{Ciphertext, Plaintext};
 
 fn main() {
     let (N, y, P, Q) = coin_flipping::generate_keys(10);
@@ -43,18 +43,18 @@ fn main() {
     let b_q: Vec<bool> = b.iter().map(|x| quadratic_residues::is_n(&(x.clone()), &P, &Q)).collect::<Vec<_>>();
     println!("Their quadratic residuoity is as follows: {:?}", b_q);
 
-    let a: Message = coin_flipping::values_receiver(&N, &y, &b);
+    let a: Plaintext = coin_flipping::values_receiver(&N, &y, &b);
     println!("A did 10 guesses: {:?}", a);
 
     let c: Ciphertext = crypto_system::encrypt(&a, &N, &y);
     println!("A encrypted their guesses to send them to B: {:?}", c);
     
-    let a_d: Message = crypto_system::decrypt(&c, &P, &Q);
+    let a_d: Plaintext = crypto_system::decrypt(&c, &P, &Q);
     print!("B decrypted A's guesses: {:?}. They ", a_d);
     if a_d != a {print!("do not ");}
     println!("match what A sent.");
 
-    let m: Message = coin_flipping::values_checker(&b, &a, &P, &Q);
+    let m: Plaintext = coin_flipping::values_checker(&b, &a, &P, &Q);
     println!("Here are the results of the coin flips: {:?}", m);
 
     println!("...");
@@ -62,9 +62,9 @@ fn main() {
     println!("Generating 10000 values...");
     let b: Ciphertext = coin_flipping::values_sender(10000usize, &N);    
     println!("Generated 10000 values...");
-    let a: Message = coin_flipping::values_receiver(&N, &y, &b);
+    let a: Plaintext = coin_flipping::values_receiver(&N, &y, &b);
     println!("Generated 10000 guesses...");
-    let m: Message = coin_flipping::values_checker(&b, &a, &P, &Q);
+    let m: Plaintext = coin_flipping::values_checker(&b, &a, &P, &Q);
     println!("Checked 10000 guesses...");
     let n: usize = m.iter().map(|&x| if x {1usize} else {0usize}).sum();
     let f = (n as f64) / (10000f64);

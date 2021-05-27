@@ -1,4 +1,5 @@
 use super::prime_gen;
+use super::crypto_system;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 use num_bigint::{BigUint};
@@ -6,9 +7,16 @@ use std::thread;
 
 #[derive(Debug)]
 pub struct Card {
-    p: BigUint,
-    q: BigUint,
-    N: BigUint
+    pub p: BigUint,
+    pub q: BigUint,
+    pub N: BigUint,
+    pub plaintext: crypto_system::Plaintext
+}
+
+#[derive(Debug)]
+pub struct EncrCard {
+    pub N: BigUint,
+    pub ciphertext: crypto_system::Ciphertext
 }
 
 fn gen_card(prime_size: usize, id: usize) -> Card {
@@ -21,7 +29,7 @@ fn gen_card(prime_size: usize, id: usize) -> Card {
         if &p_i % 4u16 == BigUint::from(3u32) && &q_i % 4u16 == BigUint::from(3u32) { break; }
     }
     let N = &p_i * &q_i;
-    let c = Card { p: p_i.clone(), q: q_i.clone(), N: N.clone() };
+    let c = Card { p: p_i.clone(), q: q_i.clone(), N: N.clone(), plaintext: crypto_system::num_to_plaintext(id as u8) };
     println!("Generated card {}.", id);
     c
 }

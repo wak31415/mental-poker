@@ -18,7 +18,7 @@ use rand::prelude::*;
 use num_bigint::BigUint;
 use num_traits::One;
 
-use super::crypto_system::{Message, Ciphertext};
+use super::crypto_system::{Plaintext, Ciphertext, PrivateKey, PublicKey};
 
 fn check_quadratic_residuoity(y: &BigUint, N: &BigUint, P: &BigUint, Q: &BigUint) -> bool {
     if !(gcd::compute(y, N).is_one()) {
@@ -31,7 +31,7 @@ fn check_quadratic_residuoity(y: &BigUint, N: &BigUint, P: &BigUint, Q: &BigUint
 }
 
 // Returns N, y, P, Q
-pub fn generate_keys(size: usize) -> (BigUint, BigUint, BigUint , BigUint) {
+pub fn generate_keys(size: usize) -> (PrivateKey, PublicKey) {
     // I really hate constants - Mihails
     let P = prime_gen::gen_prime(size);
     let Q = prime_gen::gen_prime(size);
@@ -43,17 +43,20 @@ pub fn generate_keys(size: usize) -> (BigUint, BigUint, BigUint , BigUint) {
         y = astarzstar::rand_astar(&N);
     }
 
+    let privkey = PrivateKey { p: P, q: Q };
+    let pubkey = PublicKey { N: N, y: y };
+
     // publicize N, y
     // keep private P, Q
-    return (N, y, P, Q);
+    (privkey, pubkey)
 }
 
-pub fn guess_whether_quadratic_residue(N: &BigUint, y: &BigUint, q: &BigUint) -> bool {
-    let jacobi = jacobi::compute(q, N);
+pub fn guess_whether_quadratic_residue(pubkey: &PublicKey, q: &BigUint) -> bool {
+    let jacobi = jacobi::compute(q, &pubkey.N);
     if jacobi != 1 {
         return false;
     }
-    if y == q {
+    if &pubkey.y == q {
         return false;
     }
 
@@ -78,10 +81,10 @@ pub fn values_sender(n: usize, N: &BigUint) -> Ciphertext {
 
 /* The receiver receives the big numbers and
  * sends guesses */
-pub fn values_receiver(N: &BigUint, y: &BigUint, b: &Ciphertext) -> Message {
-    let mut a: Message = Message::with_capacity(b.len());
+pub fn values_receiver(pubkey: &PublicKey, b: &Ciphertext) -> Plaintext {
+    let mut a: Plaintext = Plaintext::with_capacity(b.len());
     for i in 0..b.len() {
-        a.push(guess_whether_quadratic_residue(N, y, &b[i]));
+        a.push(guess_whether_quadratic_residue(&pubkey, &b[i]));
     }
     return a;
 }
@@ -89,12 +92,12 @@ pub fn values_receiver(N: &BigUint, y: &BigUint, b: &Ciphertext) -> Message {
 /* The sender receives the guesses and knows
  * whether the receiver succeeded their coin throws
  * from the original numbers that the sender also has */
-pub fn values_checker(b: &Ciphertext, a: &Message, P: &BigUint, Q: &BigUint) -> Message {
+pub fn values_checker(b: &Ciphertext, a: &Plaintext, privkey: &PrivateKey) -> Plaintext {
     assert_eq!(b.len(), a.len());
-    let mut m: Message = Message::with_capacity(a.len());
+    let mut m: Plaintext = Plaintext::with_capacity(a.len());
     for i in 0..a.len() {
         let a_guessed = a[i];
-        let b_knows = quadratic_residues::is_n(&b[i], P, Q);
+        let b_knows = quadratic_residues::is_n(&b[i], &privkey.p, &privkey.q);
         if a_guessed == b_knows {
             m.push(true);       
         } else {
